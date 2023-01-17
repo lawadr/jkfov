@@ -1,16 +1,15 @@
-# Jedi Knight FoV patches
+# Jedi Knight patches
 
-This repository contains patch files (in IPS format) to change _Jedi Knight: Dark Forces II_ and _Jedi Knight: Mysteries of the Sith_ to 120 field of view (FoV). These patch files were originally created by [Max Thomas](https://maxthomas.dev/dk2-mots/).
+This repository contains patches (in IPS format) for _Jedi Knight: Dark Forces II_ and _Jedi Knight: Mysteries of the Sith_ that were were originally created by [Max Thomas](https://maxthomas.dev/dk2-mots/).
 
-Accompanying the two patch files is a simple script to generate additional patch files for either game for any FoV.
+## Field of view
 
-## Jedi Knight: Dark Forces II
+Both games are hardcoded to a 90 degree field of view. These patches increase the field of view to 120.
 
-This patch file is unaltered as it works perfectly.
+* `jk-fov120.ips` is for _Jedi Knight: Dark Forces II_
+* `jkm-fov120.ips` is for _Jedi Knight: Mysteries of the Sith_
 
-## Jedi Knight: Mysteries of the Sith
-
-The original patch file causes crashes at certain points in the game, as well as when zooming in and out with the scoped rifle. These crashes happen due to a corruption of the floating point register stack, as it replaces instructions that push a single value to the stack with instructions that push three:
+The original version of the patch for _Jedi Knight: Mysteries of the Sith_ causes crashes, black screens and other glitches at certain points in the game, as well as when zooming in and out with the scoped rifle and using force lightning. These happen due to a corruption of the floating point register stack, as it replaces instructions that push a single value to the stack with instructions that push three:
 
 ```asm
 fld  DWORD PTR ds:0x57c19c
@@ -19,7 +18,7 @@ fild DWORD PTR [esp+0x8]
 fld  DWORD PTR ds:0x57ae20
 ```
 
-This version of the patch file simplifies the above to leave only one value on the stack, eliminating the crashes:
+This version of the patch simplifies the above to leave only one value on the stack, eliminating the issues:
 
 ```asm
 fld  DWORD PTR ds:0x57c19c
@@ -27,16 +26,25 @@ fstp DWORD PTR [esp+0x8]
 fld  DWORD PTR ds:0x57ae20
 ```
 
-## Patch generation script
+Accompanying these patches is a simple script to generate additional patches for either game for any field of view.
 
-To generate a 105 FoV patch file for _Jedi Knight: Dark Forces II_:
+### Patch generation script
 
-```
-python gen.py -o jk-fov105.ips jk 105
-```
-
-To generate a 110 FoV patch file for _Jedi Knight: Mysteries of the Sith_:
+To generate a 105 field of view patch for _Jedi Knight: Dark Forces II_:
 
 ```
-python gen.py -o jkm-fov110.ips jkm 110
+python gen.py jk 105 -o jk-fov105.ips 
 ```
+
+To generate a 110 field of view patch for _Jedi Knight: Mysteries of the Sith_:
+
+```
+python gen.py jkm 110 -o jkm-fov110.ips
+```
+
+## Level of detail
+
+Both games have very low distances for switching to lower level of detail models and smaller base mipmap levels. These patches force these distances to 200, effectively ensuring that the highest level of detail models and biggest base mipmap levels are used at all times.
+
+* `jk-mipmapfix.ips` is for _Jedi Knight: Dark Forces II_
+* `jkm-mipmapfix.ips` is for _Jedi Knight: Mysteries of the Sith_

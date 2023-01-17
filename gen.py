@@ -29,7 +29,7 @@ def calc_jkm_subs(fov):
 
 def main(exe, fov, output):
     """Output patch file for a given executable and field of view."""
-    with open(os.path.join(sys.path[0], f'{exe}.ips'), 'rb') as file:
+    with open(os.path.join(sys.path[0], f'{exe}-fov120.ips'), 'rb') as file:
         data = bytearray(file.read())
 
     for sub in globals()[f'calc_{exe}_subs'](fov):
